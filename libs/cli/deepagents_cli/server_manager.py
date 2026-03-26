@@ -106,8 +106,8 @@ def _scaffold_workspace(work_dir: Path) -> None:
     checkpointer_path = work_dir / "checkpointer.py"
     generate_langgraph_json(
         work_dir,
-        graph_ref=f"{server_graph_dst.resolve()}:graph",
-        checkpointer_path=f"{checkpointer_path.resolve()}:create_checkpointer",
+        graph_ref="server_graph:graph",
+        checkpointer_path="checkpointer:create_checkpointer",
     )
 
 
