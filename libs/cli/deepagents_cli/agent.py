@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import shutil
+import sys
 import tempfile
 import tomllib
 from pathlib import Path
@@ -415,17 +416,33 @@ def get_system_prompt(
                 )
                 resolved_cwd = Path()
         cwd = resolved_cwd
-        working_dir_section = (
-            f"### Current Working Directory\n\n"
-            f"The filesystem backend is currently operating in: `{cwd}`\n\n"
-            f"### File System and Paths\n\n"
-            f"**IMPORTANT - Path Handling:**\n"
-            f"- All file paths must be absolute paths (e.g., `{cwd}/file.txt`)\n"
-            f"- Use the working directory to construct absolute paths\n"
-            f"- Example: To create a file in your working directory, "
-            f"use `{cwd}/research_project/file.md`\n"
-            f"- Never use relative paths - always construct full absolute paths\n\n"
-        )
+        if sys.platform == "win32":
+            working_dir_section = (
+                f"### Current Working Directory\n\n"
+                f"The filesystem backend is currently operating in: `{cwd}`\n\n"
+                f"### File System and Paths\n\n"
+                f"**IMPORTANT - Path Handling (Windows):**\n"
+                f"- Use virtual paths starting with `/` for ALL file operations\n"
+                f"- The virtual root `/` maps to your working directory: `{cwd}`\n"
+                f"- Example: To create a file in your working directory, use `/file.txt` "
+                f"(equivalent to `{cwd}\\file.txt`)\n"
+                f"- Example: To create in a subdirectory, use `/subdir/file.txt` "
+                f"(equivalent to `{cwd}\\subdir\\file.txt`)\n"
+                f"- **Never use Windows absolute paths** like `C:\\Users\\...` — "
+                f"always use `/` virtual paths\n\n"
+            )
+        else:
+            working_dir_section = (
+                f"### Current Working Directory\n\n"
+                f"The filesystem backend is currently operating in: `{cwd}`\n\n"
+                f"### File System and Paths\n\n"
+                f"**IMPORTANT - Path Handling:**\n"
+                f"- All file paths must be absolute paths (e.g., `{cwd}/file.txt`)\n"
+                f"- Use the working directory to construct absolute paths\n"
+                f"- Example: To create a file in your working directory, "
+                f"use `{cwd}/research_project/file.md`\n"
+                f"- Never use relative paths - always construct full absolute paths\n\n"
+            )
 
     result = (
         template.replace("{mode_description}", mode_description)
@@ -872,10 +889,14 @@ def create_cli_agent(
                 root_dir=root_dir,
                 inherit_env=True,
                 env=shell_env,
+                virtual_mode=sys.platform == "win32",
             )
         else:
             # No shell access - use plain FilesystemBackend
-            backend = FilesystemBackend(root_dir=root_dir)
+            backend = FilesystemBackend(
+                root_dir=root_dir,
+                virtual_mode=sys.platform == "win32",
+            )
     else:
         # ========== REMOTE SANDBOX MODE ==========
         backend = sandbox  # Remote sandbox (ModalSandbox, etc.)
