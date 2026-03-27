@@ -16,6 +16,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+_UNSET: object = object()
+_cached_server_context: object = _UNSET
+
 
 @dataclass(frozen=True)
 class ProjectContext:
@@ -102,12 +105,36 @@ def get_server_project_context(
 ) -> ProjectContext | None:
     """Read the server project context from environment transport data.
 
+    When called with the default ``env=None`` the result is cached so that
+    subsequent calls (e.g. from tool-description formatters running inside the
+    async event loop) do not trigger ``os.getcwd()`` via ``Path.resolve()``.
+    On Windows, ``ntpath.realpath`` unconditionally calls ``os.getcwd()`` even
+    for already-absolute paths, which causes a ``BlockingError`` when invoked
+    inside the LangGraph async event loop.
+
     Args:
         env: Environment mapping to read from.
 
     Returns:
-        Reconstructed project context, or `None` if no server context exists.
+        Reconstructed project context, or ``None`` if no server context exists.
     """
+    global _cached_server_context  # noqa: PLW0603
+
+    if env is None and _cached_server_context is not _UNSET:
+        return _cached_server_context  # type: ignore[return-value]
+
+    result = _resolve_server_project_context(env)
+
+    if env is None:
+        _cached_server_context = result
+
+    return result
+
+
+def _resolve_server_project_context(
+    env: Mapping[str, str] | None,
+) -> ProjectContext | None:
+    """Compute the server project context from environment variables."""
     environment = os.environ if env is None else env
     raw_cwd = environment.get(f"{_ENV_PREFIX}CWD")
     if not raw_cwd:
