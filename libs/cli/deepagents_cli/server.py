@@ -245,6 +245,7 @@ def _build_server_cmd(config_path: Path, *, host: str, port: int) -> list[str]:
         str(port),
         "--no-browser",
         "--no-reload",
+        "--allow-blocking",
         "--config",
         str(config_path),
     ]

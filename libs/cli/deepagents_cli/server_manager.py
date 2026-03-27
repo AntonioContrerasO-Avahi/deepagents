@@ -268,7 +268,40 @@ async def start_server_and_get_agent(
         graph_name="agent",
     )
 
-    return agent, server, None
+    mcp_server_info = _read_mcp_server_info(work_dir)
+
+    return agent, server, mcp_server_info
+
+
+def _read_mcp_server_info(work_dir: Path) -> list[Any] | None:
+    """Read MCP server metadata written by server_graph.py at startup.
+
+    Returns the parsed list of MCPServerInfo objects, or None if the file
+    does not exist or cannot be parsed.
+    """
+    import json
+
+    from deepagents_cli.mcp_tools import MCPServerInfo, MCPToolInfo
+
+    mcp_info_path = work_dir / "mcp_server_info.json"
+    if not mcp_info_path.exists():
+        return None
+    try:
+        data = json.loads(mcp_info_path.read_text(encoding="utf-8"))
+        return [
+            MCPServerInfo(
+                name=s["name"],
+                transport=s["transport"],
+                tools=[
+                    MCPToolInfo(name=t["name"], description=t["description"])
+                    for t in s.get("tools", [])
+                ],
+            )
+            for s in data
+        ]
+    except Exception:
+        logger.debug("Failed to read mcp_server_info.json", exc_info=True)
+        return None
 
 
 # ------------------------------------------------------------------

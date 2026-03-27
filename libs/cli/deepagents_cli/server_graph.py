@@ -121,6 +121,21 @@ def make_graph() -> Any:  # noqa: ANN401
 
     tools, mcp_server_info = _build_tools(config, project_context)
 
+    # Write MCP server info to a JSON file so the client process can
+    # populate the /mcp viewer without re-loading MCP tools itself.
+    # Best-effort — failure must not crash the server.
+    try:
+        import dataclasses
+        import json
+        from pathlib import Path as _Path
+
+        _mcp_info_path = _Path.cwd() / "mcp_server_info.json"
+        _mcp_info_path.write_text(
+            json.dumps([dataclasses.asdict(s) for s in (mcp_server_info or [])])
+        )
+    except Exception:
+        logger.debug("Failed to write mcp_server_info.json", exc_info=True)
+
     # Create sandbox backend if a sandbox provider is configured.
     # The context manager is held open at module level and cleaned up via
     # atexit so the sandbox lives for the entire server process lifetime.

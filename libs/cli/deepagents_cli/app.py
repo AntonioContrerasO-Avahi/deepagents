@@ -1265,22 +1265,26 @@ class DeepAgentsApp(App):
             )
             return
 
-        agent, server_proc, _ = server_result
+        agent, server_proc, server_mcp_info = server_result
 
         # Assign immediately so the finally block in run_textual_app can
         # clean up the server even if the ServerReady message is never
         # processed (e.g. user quits during startup).
         self._server_proc = server_proc
 
-        mcp_info = None
-        if len(results) > 1 and not isinstance(results[1], BaseException):
-            mcp_info = results[1]
-        elif len(results) > 1 and isinstance(results[1], BaseException):
-            logger.warning(
-                "MCP metadata preload failed: %s",
-                results[1],
-                exc_info=results[1],
-            )
+        # Prefer MCP info returned directly from the server (written to
+        # mcp_server_info.json at startup). Fall back to the client-side
+        # preload result if the server didn't provide it.
+        mcp_info = server_mcp_info
+        if mcp_info is None:
+            if len(results) > 1 and not isinstance(results[1], BaseException):
+                mcp_info = results[1]
+            elif len(results) > 1 and isinstance(results[1], BaseException):
+                logger.warning(
+                    "MCP metadata preload failed: %s",
+                    results[1],
+                    exc_info=results[1],
+                )
 
         self.post_message(
             self.ServerReady(
