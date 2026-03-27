@@ -263,6 +263,7 @@ def _build_server_env() -> dict[str, str]:
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     env["LANGGRAPH_AUTH_TYPE"] = "noop"
     env["BG_JOB_ISOLATED_LOOPS"] = "true"
+    env["LANGGRAPH_ALLOW_BLOCKING"] = "true"
     for key in (
         "LANGGRAPH_AUTH",
         "LANGGRAPH_CLOUD_LICENSE_KEY",
