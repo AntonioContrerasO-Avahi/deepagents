@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "jcb": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "mcp-proxy-for-aws@latest",
+        "https://poc-myriva-gateway-xclkbf5jdr.gateway.bedrock-agentcore.us-west-2.amazonaws.com/mcp",
+        "--service", "bedrock-agentcore",
+        "--region", "us-west-2",
+        "--profile", "default"
+      ]
+    }
+  }
+}

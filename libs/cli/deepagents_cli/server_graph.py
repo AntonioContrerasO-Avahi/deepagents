@@ -81,18 +81,20 @@ def _build_tools(
                     stateless=True,
                 )
             )
+            tools.extend(mcp_tools)
+            if mcp_tools:
+                logger.info("Loaded %d MCP tool(s)", len(mcp_tools))
         except FileNotFoundError:
             logger.exception("MCP config file not found: %s", config.mcp_config_path)
             raise
-        except RuntimeError:
+        except Exception:
+            # Non-fatal: log and continue without MCP tools so the server
+            # can still start. A broken MCP server (bad command, network
+            # error, auth failure) should not crash the whole agent.
             logger.exception(
-                "Failed to load MCP tools (config: %s)", config.mcp_config_path
+                "Failed to load MCP tools (config: %s) — starting without them",
+                config.mcp_config_path,
             )
-            raise
-
-        tools.extend(mcp_tools)
-        if mcp_tools:
-            logger.info("Loaded %d MCP tool(s)", len(mcp_tools))
 
     return tools, mcp_server_info
 
