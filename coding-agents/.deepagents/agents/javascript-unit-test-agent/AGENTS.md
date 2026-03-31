@@ -4,7 +4,6 @@ description: >
   JavaScript unit test writer for the bug-fix-suggestion skill. Writes isolated Jest tests
   for a fix that has already been applied. No Express server. No real dependencies.
   Invoked by the bug-fix-suggestion orchestrator only after a fix is implemented.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # JavaScript unit test agent

@@ -6,7 +6,6 @@ description: >
   instructions, and risk flags. Invoked by the bug-fix-suggestion orchestrator only.
   Do not generate tests — that is handled by separate test agents.
   TEMPORARY — Python support is provisional and will be removed in a future version.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # Python fix agent

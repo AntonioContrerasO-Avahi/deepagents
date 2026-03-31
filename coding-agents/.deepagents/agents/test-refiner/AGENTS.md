@@ -5,7 +5,6 @@ description: >
   orchestrator after a developer denies a generated test. Pass the original candidate JSON,
   the rejected code, developer feedback, iteration count, and the research context package.
   Returns a single revised @Test method. Never invoked directly by the developer.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # Test refiner

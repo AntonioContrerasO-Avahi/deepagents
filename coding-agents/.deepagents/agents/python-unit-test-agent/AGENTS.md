@@ -5,7 +5,6 @@ description: >
   for a fix that has already been applied. No database, no HTTP server, no real external
   calls. Invoked by the bug-fix-suggestion orchestrator only after a fix is implemented.
   TEMPORARY — Python support is provisional and will be removed in a future version.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # Python unit test agent

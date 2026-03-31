@@ -6,7 +6,6 @@ description: >
   after the research context package has been gathered. Reads code structure, annotations,
   KDoc/Javadoc, git diff, Jira acceptance criteria, and Confluence standards. Returns a
   structured JSON array of test candidates ranked by priority.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # Test analyzer

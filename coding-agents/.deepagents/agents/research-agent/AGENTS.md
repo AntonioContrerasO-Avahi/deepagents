@@ -5,7 +5,6 @@ description: >
   to gather external knowledge — error pattern explanations, framework best practices,
   CVE checks, and recommended coding patterns. Returns a structured context package.
   Invoked by the bug-fix-suggestion orchestrator only. Do not invoke directly.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # Research agent

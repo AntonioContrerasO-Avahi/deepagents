@@ -5,7 +5,6 @@ description: >
   context of a Jira ticket and produces root cause, unified diff, code path, implementation
   instructions, and risk flags. Invoked by the bug-fix-suggestion orchestrator only.
   Do not generate tests — that is handled by separate test agents.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # Java fix agent

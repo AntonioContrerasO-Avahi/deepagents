@@ -4,7 +4,6 @@ description: >
   JavaScript integration test writer for the bug-fix-suggestion skill. Writes supertest
   tests against the real Express app for a fix that has already been applied.
   Invoked by the bug-fix-suggestion orchestrator only after a fix is implemented.
-model: bedrock:global.amazon.nova-2-lite-v1:0
 ---
 
 # JavaScript integration test agent
